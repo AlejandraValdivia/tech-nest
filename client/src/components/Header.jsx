@@ -9,8 +9,21 @@ import {
   Text,
   useColorModeValue as mode,
   useDisclosure,
+  AlertDescription,
+  Alert,
+  AlertIcon,
+  AlertTitle,
+  Divider,
+  Image,
+  Menu,
+  MenuButton,
+  MenuDivider,
+  MenuItem,
+  MenuList,
+  Spacer,
+  useToast,
 } from "@chakra-ui/react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { BsPhoneFlip } from "react-icons/bs";
 import { Link as ReactLink } from "react-router-dom";
 import { MdOutlineFavorite, MdOutlineFavoriteBorder } from "react-icons/md";
@@ -20,6 +33,7 @@ import ColorModeToggle from "./ColorModeToggle";
 import { BiUserCheck } from "react-icons/bi";
 import { toggleFavorites } from "../redux/actions/productActions";
 import { HamburgerIcon, CloseIcon } from "@chakra-ui/icons";
+import { TbShoppingCart } from "react-icons/tb";
 
 const Links = [
   { name: "Products", route: "/products" },
@@ -31,7 +45,11 @@ const Links = [
 const Header = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const dispatch = useDispatch();
+  useToast();
   const { favoritesToggled } = useSelector((state) => state.product);
+  const { cartItems } = useSelector((state) => state.cart);
+  // const { userInfo } = useSelector((state) => state.user);
+  // const [showBanner, setShowBanner] = useState(userInfo ? !userInfo.active : false);
 
   useEffect(() => {
     dispatch(toggleFavorites(false));
@@ -47,6 +65,26 @@ const Header = () => {
             icon={isOpen ? <CloseIcon /> : <HamburgerIcon />}
             onClick={isOpen ? onClose : onOpen}
           />
+          <IconButton
+            ml="12"
+            position="absolute"
+            icon={<TbShoppingCart size="20px" />}
+            as={ReactLink}
+            to="/cart"
+            variant="ghost"
+          />
+          {cartItems.length > 0 && (
+            <Text
+              fontWeight="bold"
+              fontStyle="italic"
+              position="absolute"
+              ml="74px"
+              mt="-6"
+              fontSize="sm"
+            >
+              {cartItems.length}
+            </Text>
+          )}
         </Flex>
         <HStack spacing="8" alignItems="center">
           <Box
@@ -71,6 +109,26 @@ const Header = () => {
                 <Text fontWeight="medium">{link.name}</Text>
               </NavLink>
             ))}
+            <Box>
+              <IconButton
+                icon={<TbShoppingCart size="20px" />}
+                as={ReactLink}
+                to="/cart"
+                variant="ghost"
+              />
+              {cartItems.length > 0 && (
+                <Text
+                  fontWeight="bold"
+                  fontStyle="italic"
+                  position="absolute"
+                  ml="26px"
+                  mt="-6"
+                  fontSize="sm"
+                >
+                  {cartItems.length}
+                </Text>
+              )}
+            </Box>
             <ColorModeToggle />
             {favoritesToggled ? (
               <IconButton
