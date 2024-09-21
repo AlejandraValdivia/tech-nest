@@ -1,0 +1,31 @@
+{
+  "name": "tech-nest-two",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server/index",
+    "client": "npm run start --prefix client",
+    "build": "cd client && npm install && npm run build",
+    "server": "node server/index.js",
+    "app": "concurrently npm \"npm run server\" \"npm run client\""
+  },
+  "keywords": [],
+  "author": "Alejandra Valdivia",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@babel/plugin-transform-private-property-in-object": "^7.24.7",
+    "bcryptjs": "^2.4.3",
+    "concurrently": "^9.0.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.0",
+    "express-async-handler": "^1.2.0",
+    "jsonwebtoken": "^9.0.2",
+    "jwt-decode": "^4.0.0",
+    "mongoose": "^8.6.2",
+    "nodemailer": "^6.9.15",
+    "stripe": "^16.10.0"
+  }
+}
