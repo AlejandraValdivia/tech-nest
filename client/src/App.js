@@ -6,8 +6,10 @@ import ProductScreen from "./screens/ProductScreen";
 import LandingScreen from "./screens/LandingScreen";
 import ProductsScreen from "./screens/ProductsScreen";
 import LoginScreen from "./screens/LoginScreen";
+import EmailVerificationScreen from "./screens/EmailVerificationScreen";
 import CartScreen from "./screens/CartScreen";
 import Footer from "./components/Footer";
+import PasswordResetScreen from "./screens/PasswordResetScreen";
 
 function App() {
   return (
@@ -21,6 +23,9 @@ function App() {
             <Route path="/product/:id" element={<ProductScreen />} />
             <Route path="/cart" element={<CartScreen />} />
             <Route path="/login" element={<LoginScreen />} />
+            <Route path="/email-verify/:token" element={<EmailVerificationScreen />} />
+            <Route path="/password-reset/:token" element={<PasswordResetScreen />} />
+
           </Routes>
         </main>
         <Footer />

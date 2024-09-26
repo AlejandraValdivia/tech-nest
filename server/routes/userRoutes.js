@@ -3,7 +3,7 @@ import User from "../models/User.js";
 import asyncHandler from "express-async-handler";
 import jwt from "jsonwebtoken";
 import { sendVerificationEmail } from "../middleware/sendVerificationEmail.js";
-
+import { sendPasswordResetEmail } from "../middleware/sendPasswordResetEmail.js";
 const userRoutes = express.Router();
 
 // TODO: redifine expiresIn
@@ -79,7 +79,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
 // verify email
 const verifyEmail = asyncHandler(async (req, res) => {
-  const token = req.headers.authorization.split(" ")[1];
+  const token = req.query.token;  
   try {
     const decoded = jwt.verify(token, process.env.TOKEN_SECRET);
     const user = await User.findById(decoded.id);
@@ -87,12 +87,12 @@ const verifyEmail = asyncHandler(async (req, res) => {
     if (user) {
       user.active = true;
       await user.save();
-      res.json("Your email has been verified. You can now log in.");
+      res.send("Your email has been verified. You can now log in.");
     } else {
       res.status(404).send("User not found");
     }
   } catch (error) {
-    res.status(401).send("Email address could not be verified");
+    res.status(401).send("Email verification failed.");
   }
 });
 
@@ -113,23 +113,22 @@ const passwordResetRequest = asyncHandler(async (req, res) => {
 
 // password reset
 const passwordReset = asyncHandler(async (req, res) => {
-	const token = req.headers.authorization.split(' ')[1];
-	try {
-		const decoded = jwt.verify(token, process.env.TOKEN_SECRET);
-		const user = await User.findById(decoded.id);
+  const token = req.headers.authorization.split(" ")[1];
+  try {
+    const decoded = jwt.verify(token, process.env.TOKEN_SECRET);
+    const user = await User.findById(decoded.id);
 
-		if (user) {
-			user.password = req.body.password;
-			await user.save();
-			res.json('Your password has been updated successfully.');
-		} else {
-			res.status(404).send('User not found.');
-		}
-	} catch (error) {
-		res.status(401).send('Password reset failed.');
-	}
+    if (user) {
+      user.password = req.body.password;
+      await user.save();
+      res.json("Your password has been updated successfully.");
+    } else {
+      res.status(404).send("User not found.");
+    }
+  } catch (error) {
+    res.status(401).send("Password reset failed.");
+  }
 });
-
 
 userRoutes.route("/login").post(loginUser);
 userRoutes.route("/register").post(registerUser);
