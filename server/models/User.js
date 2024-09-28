@@ -16,8 +16,11 @@ const userSchema = new mongoose.Schema(
 );
 
 userSchema.methods.matchPasswords = async function (enteredPassword) {
+	console.log('Entered Password:', enteredPassword);  // Log the entered password
+	console.log('Stored Password:', this.password);     // Log the stored password in the database
 	return await bcrypt.compare(enteredPassword, this.password);
-};
+  };
+  
 
 userSchema.pre('save', async function (next) {
 	if (!this.isModified('password')) {
