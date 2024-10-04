@@ -170,7 +170,7 @@ export const getUserOrders = () => async (dispatch, getState) => {
 	try {
 		const config = { headers: { Authorization: `Bearer ${userInfo.token}`, 'Content-Type': 'application/json' } };
 
-		const { data } = await axios.get(`/api/users/${userInfo._id}`, config);
+		const { data } = await axios.get(`http://localhost:3000/api/users/${userInfo._id}`, config);
 		dispatch(setUserOrders(data));
 	} catch (error) {
 		dispatch(

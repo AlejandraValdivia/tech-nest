@@ -99,7 +99,7 @@ const Header = () => {
 					<HStack spacing='8' alignItems='center'>
 						<Box alignItems='center' display='flex' as={ReactLink} to='/'>
 							<Icon as={BsPhoneFlip} h='6' w='6' color={mode('black', 'yellow.200')} />
-							<Text as='b'>Tech Lines</Text>
+							<Text as='b'>Tech Nest</Text>
 						</Box>
 
 						<HStack as='nav' spacing='4' display={{ base: 'none', md: 'flex' }}>
@@ -187,7 +187,7 @@ const Header = () => {
 										Sign in
 									</MenuItem>
 									<MenuDivider />
-									<MenuItem as={ReactLink} to='/registration' p='2' fontWeight='400' variant='link'>
+									<MenuItem as={ReactLink} to='/register' p='2' fontWeight='400' variant='link'>
 										Sign up
 									</MenuItem>
 								</MenuList>
