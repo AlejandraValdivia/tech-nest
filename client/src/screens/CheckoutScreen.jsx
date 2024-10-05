@@ -8,6 +8,8 @@ const CheckoutScreen = () => {
   const { userInfo } = useSelector((state) => state.user);
   const location = useLocation();
 
+  console.log("User Info", userInfo);
+
   return userInfo ? (
     <Box
       minH="100vh"
@@ -34,7 +36,7 @@ const CheckoutScreen = () => {
           </Stack>
         </Stack>
         <Flex direction="column" align="center" flex="1">
-          <OrderSummary checkoutSreen={true} />
+          <OrderSummary checkoutScreen={true} />
         </Flex>
       </Stack>
     </Box>
@@ -42,5 +44,7 @@ const CheckoutScreen = () => {
     <Navigate to="/login" replace={true} state={{ from: location }} />
   );
 };
+
+console.log("Rendering CheckoutScreen");
 
 export default CheckoutScreen;

@@ -17,7 +17,8 @@ import * as Yup from "yup";
 import { setShipping } from "../redux/actions/cartActions.js";
 import { setAddress, setPayment } from "../redux/actions/orderActions.js";
 import TextField from "./TextField.jsx";
-import { Link as ReactLink } from "react-router-dom";
+import { Link as ReactLink, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 const ShippingInformation = () => {
   const { shipping } = useSelector((state) => state.cart);
@@ -25,10 +26,19 @@ const ShippingInformation = () => {
 
   const dispatch = useDispatch();
 
-  const onSubmit = async (values) => {
-    dispatch(setAddress(values));
-    dispatch(setPayment);
-  };
+  const navigate = useNavigate();
+
+const onSubmit = async (values) => {
+  dispatch(setAddress(values));
+  dispatch(setPayment());
+  navigate('/payment');  // Add this line to navigate after submission
+};
+
+useEffect(() => {
+  console.log("Updated Shipping Address:", shippingAddress);
+}, [shippingAddress]);
+
+  
   return (
     <Formik
       initialValues={{
@@ -51,11 +61,11 @@ const ShippingInformation = () => {
           .required("We need a country.")
           .min(2, "This country is too short."),
       })}
-      onSubmit={onSubmit}
+      onSubmit={onSubmit} // Ensure this is properly set
     >
-      {(formik) => {
-        <>
-          <VStack as="form">
+      {(formik) => (
+        <form onSubmit={formik.handleSubmit}>
+          <VStack>
             <FormControl>
               <TextField
                 name="address"
@@ -133,15 +143,13 @@ const ShippingInformation = () => {
               variant="outline"
               colorScheme="cyan"
               w="100%"
-              as={ReactLink}
-              to="/payment"
-              onClick={formik.handleSubmit}
+              type="submit" // Change this to type="submit"
             >
               Continue to Payment
             </Button>
           </Flex>
-        </>
-      }}
+        </form>
+      )}
     </Formik>
   );
 };
