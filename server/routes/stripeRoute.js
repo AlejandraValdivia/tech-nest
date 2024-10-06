@@ -1,74 +1,49 @@
-import dotenv from 'dotenv';
+import dotenv from "dotenv";
 dotenv.config();
 
-import express from 'express';
-import Stripe from 'stripe';
-import Order from '../models/Order.js';
-import Product from '../models/Product.js';
-import { protectRoute } from '../middleware/authMiddleware.js';
+import express from "express";
+import Stripe from "stripe";
+import Order from "../models/Order.js"; // Assuming you have an Order model
+import { protectRoute } from "../middleware/authMiddleware.js";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-
 const stripeRoute = express.Router();
 
-const stripePayment = async (req, res) => {
-	const data = req.body;
+stripeRoute.post("/create-payment-intent", async (req, res) => {
+  try {
+    console.log("Stripe Secret Key:", process.env.STRIPE_SECRET_KEY); // Log Stripe Secret Key for debugging
+    console.log("Received Items:", req.body.items); // Log the items received from the frontend
 
-	let lineItems = [];
+    if (!process.env.STRIPE_SECRET_KEY) {
+      return res.status(500).send("Stripe secret key is missing.");
+    }
 
-	if (data.shipping == 14.99) {
-		lineItems.push({
-			price: process.env.EXPRESS_SHIPPING_ID,
-			quantity: 1,
-		});
-	} else {
-		lineItems.push({
-			price: process.env.STANDARD_SHIPPING_ID,
-			quantity: 1,
-		});
-	}
+    // Calculate the order amount based on the items received
+    const calculateOrderAmount = (items) => {
+      let total = 0;
+      items.forEach((item) => {
+        total += item.amount;
+      });
+      return total;
+    };
 
-	data.cartItems.forEach((item) => {
-		lineItems.push({
-			price: item.stripeId,
-			quantity: item.qty,
-		});
-	});
+    // Create a PaymentIntent with the calculated amount and currency
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: calculateOrderAmount(req.body.items), // Calculate amount based on items
+      currency: "usd",
+      automatic_payment_methods: { enabled: true },
+    });
 
-	const session = await stripe.checkout.sessions.create({
-		line_items: lineItems,
-		mode: 'payment',
-		success_url: 'http://localhost:3000/success',
-		cancel_url: 'http://localhost:3000/cancel',
-	});
+    console.log("Payment Intent Created:", paymentIntent);
 
-	const order = new Order({
-		orderItems: data.cartItems,
-		user: data.userInfo._id,
-		username: data.userInfo.name,
-		email: data.userInfo.email,
-		shippingAddress: data.shippingAddress,
-		shippingPrice: data.shipping,
-		subtotal: data.subtotal,
-		totalPrice: Number(data.subtotal + data.shipping).toFixed(2),
-	});
-
-	const newOrder = await order.save();
-
-	data.cartItems.forEach(async (cartItem) => {
-		let product = await Product.findById(cartItem.id);
-		product.stock = product.stock - cartItem.qty;
-		product.save();
-	});
-
-	res.send(
-		JSON.stringify({
-			orderId: newOrder._id.toString(),
-			url: session.url,
-		})
-	);
-};
-
-stripeRoute.route('/').post(protectRoute, stripePayment);
+    // Respond with the client secret for the frontend to complete the payment
+    res.send({
+      clientSecret: paymentIntent.client_secret,
+    });
+  } catch (error) {
+    console.error("Error creating payment intent:", error.message);
+    res.status(500).send("Internal Server Error");
+  }
+});
 
 export default stripeRoute;

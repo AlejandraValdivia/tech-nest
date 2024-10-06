@@ -16,6 +16,7 @@ import { useState, useEffect } from "react";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import CheckoutScreen from "./screens/CheckoutScreen";
 import YourOrdersScreen from "./screens/YourOrdersScreen.jsx";
+import PaymentScreen from "./screens/PaymentScreen.jsx";
 import CancelScreen from "./screens/CancelScreen";
 import SuccessScreen from "./screens/SuccessScreen";
 
@@ -73,6 +74,7 @@ function App() {
                   element={<PasswordResetScreen />}
                 />
                 <Route path="/checkout" element={<CheckoutScreen />} />
+                <Route path="/checkout/create-payment-intent" element={<PaymentScreen />} />
                 <Route path="/cancel" element={<CancelScreen />} />
                 <Route path="/order-history" element={<YourOrdersScreen />} />
                 <Route path="/success" element={<SuccessScreen />} />

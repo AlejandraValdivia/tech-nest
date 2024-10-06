@@ -28,17 +28,15 @@ const ShippingInformation = () => {
 
   const navigate = useNavigate();
 
-const onSubmit = async (values) => {
-  dispatch(setAddress(values));
-  dispatch(setPayment());
-  navigate('/payment');  // Add this line to navigate after submission
-};
+  const onSubmit = async (values) => {
+    dispatch(setAddress(values));
+    dispatch(setPayment());
+  };
 
-useEffect(() => {
-  console.log("Updated Shipping Address:", shippingAddress);
-}, [shippingAddress]);
+  useEffect(() => {
+    console.log("Updated Shipping Address:", shippingAddress);
+  }, [shippingAddress]);
 
-  
   return (
     <Formik
       initialValues={{
@@ -143,7 +141,9 @@ useEffect(() => {
               variant="outline"
               colorScheme="cyan"
               w="100%"
-              type="submit" // Change this to type="submit"
+              type="submit"
+              as={ReactLink}
+              to="/checkout/create-payment-intent"
             >
               Continue to Payment
             </Button>
