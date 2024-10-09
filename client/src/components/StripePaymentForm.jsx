@@ -1,54 +1,47 @@
-// src/components/StripePaymentForm.jsx
-import React, { useEffect, useState } from 'react';
-import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
+import React, { useState } from 'react';
+import { PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
 
-const StripePaymentForm = ({ clientSecret }) => {
+export default function StripePaymentForm() {
   const stripe = useStripe();
   const elements = useElements();
-  const [paymentSuccess, setPaymentSuccess] = useState(false);
-  const [errorMessage, setErrorMessage] = useState(null);
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+  const [message, setMessage] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
     if (!stripe || !elements) {
+      // Stripe.js hasn't yet loaded.
       return;
     }
 
-    const cardElement = elements.getElement(CardElement);
+    setIsLoading(true);
 
-    const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
-      payment_method: {
-        card: cardElement,
-        billing_details: {
-          name: 'Customer Name',
-        },
+    const { error } = await stripe.confirmPayment({
+      elements,
+      confirmParams: {
+        return_url: 'http://localhost:3001/success', // Redirect to /success after payment
       },
     });
 
     if (error) {
-      setErrorMessage(error.message);
-      console.error('Payment failed:', error.message);
-    } else {
-      setPaymentSuccess(true);
-      console.log('Payment successful:', paymentIntent);
+      setMessage(error.message);
     }
+
+    setIsLoading(false);
   };
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <CardElement />
-        <button type="submit" disabled={!stripe}>
-          Pay Now
-        </button>
-      </form>
-
-      {/* Display success or error message */}
-      {paymentSuccess && <div>Payment successful! 🎉</div>}
-      {errorMessage && <div style={{ color: 'red' }}>{errorMessage}</div>}
-    </div>
+    <form id="payment-form" onSubmit={handleSubmit}>
+      <PaymentElement id="payment-element" />
+      <button disabled={isLoading || !stripe || !elements} id="submit">
+        <span id="button-text">
+          {isLoading ? <div className="spinner" id="spinner"></div> : 'Pay now'}
+        </span>
+      </button>
+      {/* Show error or success messages */}
+      {message && <div id="payment-message">{message}</div>}
+    </form>
   );
-};
-
-export default StripePaymentForm;
+}
