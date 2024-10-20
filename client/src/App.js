@@ -19,6 +19,7 @@ import YourOrdersScreen from "./screens/YourOrdersScreen.jsx";
 import PaymentScreen from "./screens/PaymentScreen.jsx";
 import CancelScreen from "./screens/CancelScreen";
 import SuccessScreen from "./screens/SuccessScreen";
+import AdminConsoleScreen from "./screens/AdminConsoleScreen.jsx";
 
 function App() {
   const theme = extendTheme({
@@ -78,6 +79,7 @@ function App() {
                 <Route path="/cancel" element={<CancelScreen />} />
                 <Route path="/order-history" element={<YourOrdersScreen />} />
                 <Route path="/success" element={<SuccessScreen />} />
+                <Route path="/admin-console" element={<AdminConsoleScreen />} />
               </Routes>
             </main>
             <Footer />

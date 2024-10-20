@@ -67,11 +67,6 @@ export const productsSlice = createSlice({
 			state.reviewRemoval = true;
 			state.loading = false;
 		},
-		productReviewed: (state, { payload }) => {
-			state.loading = false;
-			state.error = null;
-			state.reviewed = payload;
-		}
 	},
 });
 
@@ -87,7 +82,6 @@ export const {
 	setProductUpdateFlag,
 	resetError,
 	setReviewRemovalFlag,
-	
 } = productsSlice.actions;
 
 export default productsSlice.reducer;
