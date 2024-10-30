@@ -17,7 +17,8 @@ const app = express();
 app.use(express.json());
 app.use(
   cors({
-    origin: "http://localhost:3001",
+    origin: ["http://localhost:3001", "https://tech-nest-131f.onrender.com"],
+    credentials: true,
   })
 );
 
@@ -36,12 +37,12 @@ app.use("/api", emailTestRoutes);
 const port = process.env.PORT || 3000;
 
 const __dirname = path.resolve();
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-if (process.env.NODE_ENV == 'production') {
-  app.use(express.static(path.join(__dirname, '/client/build')));
+if (process.env.NODE_ENV == "production") {
+  app.use(express.static(path.join(__dirname, "/client/build")));
   app.get("*", (req, res) => {
-    res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
+    res.sendFile(path.resolve(__dirname, "client", "build", "index.html"));
   });
 }
 
